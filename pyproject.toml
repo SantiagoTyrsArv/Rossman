@@ -1,0 +1,28 @@
+[project]
+name = "rossmann-forecast"
+version = "0.1.0"
+description = "Predicción de demanda Rossmann con SARIMAX y GRU + app Streamlit"
+requires-python = ">=3.11"
+
+[tool.black]
+line-length = 100
+target-version = ["py311"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+extend-exclude = ["notebooks"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+ignore = ["E402"]  # las páginas de Streamlit ajustan sys.path antes de importar
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+markers = [
+    "slow: necesita TensorFlow o datos crudos (se excluye en la CI)",
+]
+filterwarnings = [
+    "ignore::DeprecationWarning",
+]
