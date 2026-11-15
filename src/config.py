@@ -22,5 +22,6 @@ SEASON = 7
 SEED = 42
 
 LEVELS_TYPES = ["type_a", "type_b", "type_c", "type_d"]
-SELECTED_STORES: list[int] = []  # los define Persona A tras el EDA (tarea A2)
+# Una por StoreType (a, b, c, d) con historia completa + la de mayor respuesta a la promo (D-11)
+SELECTED_STORES: list[int] = [9, 769, 504, 960, 693]
 MODELS = ["naive", "sarima", "sarimax", "gru"]

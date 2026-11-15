@@ -53,3 +53,11 @@
 - **Por qué:** sin relleno, el total y el tipo de esas tiendas caen artificialmente ~180 tiendas durante medio año, lo que el modelo leería como un cambio de nivel real.
 - **Alternativa descartada:** interpolar entre antes y después del hueco (usa información futura).
 - **Impacto:** a validar en el EDA (A2) comparando el total con y sin relleno.
+- **Impacto medido (EDA):** 33 121 tienda-días rellenados (180 tiendas en el 2.º semestre de 2014 y 1 tienda el 01/01/2013). Sin relleno, la venta total del 2.º semestre de 2014 quedaría un 15 % por debajo (1 042 M€ frente a 1 231 M€).
+
+### D-11: `SELECTED_STORES = [9, 769, 504, 960, 693]` (A2, hecho por B, 2026-11-15)
+- **Qué:** una tienda por StoreType (9 = a, 769 = b, 504 = c, 960 = d), con historia completa, sin días abiertos con venta 0 y con venta cercana a la mediana de su tipo, más la **693** (tipo d), que tiene la mayor respuesta a la promo (~+100 % de lunes a viernes) entre las tiendas con venta ≥ la mediana global.
+- **Alternativa descartada:** la tienda 198 responde igual a la promo, pero vende ~2 900 €/día; en una tienda tan chica el MAPE es muy inestable.
+
+### D-01 validada (EDA, 2026-11-15)
+- Solo el 2,4 % de los tienda-días de domingo están abiertos y el domingo aporta el 0,5 % de la venta (el tipo b abre el 98 % de los domingos). Se mantiene la serie diaria con domingos, s = 7 y `open_share`.

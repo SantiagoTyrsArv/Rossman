@@ -28,4 +28,25 @@
 - **Situación actual:** no existen todavía.
 - **Propuesta:** la app usa `app/mock_data.py` (mismo esquema del contrato) y lo indica con el aviso "DATOS DE PRUEBA". El simulador cambia solo a SARIMAX real cuando existen el pkl, el meta y `build_future_exog`.
 - **Afecta a:** solo mi área.
+- **Decisión del equipo:** parcialmente resuelta (2026-11-15): ya existen `history.parquet` y `build_future_exog` (A3). Faltan `sarimax_*.pkl` y su meta (A7).
+
+### P-04: calendario de promos de `test.csv` como escenario base del futuro (2026-11-15, detectada por Persona B)
+- **Situación actual:** `build_future_exog` usa por defecto el patrón histórico (alternancia quincenal desde la última semana con promo, 27/07/2015 → promo la semana del 10/08). El calendario real planificado en `test.csv` difiere en 34 de 48 días abiertos: tiene promo las semanas del 03/08, 17/08, 31/08 y 14/09 (rompe la alternancia, como ya pasó el 27/04 y el 04/05).
+- **Propuesta:** usar el calendario de `test.csv` como `promo_days` por defecto del periodo futuro (o como escenario predefinido "Calendario planificado" en la app). Es información conocida de antemano (promos planificadas), no fuga.
+- **Comparación:**
+
+| Criterio | Actual | Propuesta |
+| --- | --- | --- |
+| Requerimientos | Cumple | Cumple; escenario base más realista |
+| Gratis / despliegue | Sí | Sí (exportar un CSV pequeño a `artifacts/`) |
+| Cronograma | 0 h | ~1 h |
+| Sin fuga / partición temporal | Sí | Sí: el calendario de promos es un plan conocido; no usa Sales ni Customers futuros |
+| Cambia el contrato | No | Sí: comportamiento por defecto de `build_future_exog` (5.5) |
+| Afecta al otro | — | Sí (función de A, la usan el simulador y la GRU) |
+| Evidencia | — | 34/48 días difieren del calendario real |
+| Explicable en el curso | Sí | Sí (exógenas conocidas de antemano) |
+| Riesgo | Ninguno | Bajo |
+
+- **Recomendación de Claude:** aplicar como **escenario predefinido** en la app ("Calendario planificado") sin cambiar el valor por defecto de `build_future_exog`; así no se rompe el contrato.
+- **Afecta a:** contrato y área de A (si se cambia el valor por defecto); solo área de B (si es un escenario de la app).
 - **Decisión del equipo:** pendiente.
