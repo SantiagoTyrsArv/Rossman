@@ -24,7 +24,7 @@ _LAYOUT = dict(
     template="plotly_white",
     hovermode="x unified",
     margin=dict(l=10, r=10, t=40, b=10),
-    legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0),
+    legend=dict(orientation="h", yanchor="top", y=-0.12, xanchor="left", x=0),
     yaxis=dict(tickformat=",.0f", title="Ventas (€)"),
 )
 
