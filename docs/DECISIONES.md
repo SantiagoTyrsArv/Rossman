@@ -23,3 +23,12 @@
 - **Qué:** `GUIA_PERSONA_A.md` y `GUIA_PERSONA_B.md` quedan fuera de Git (`.gitignore`).
 - **Por qué:** decisión explícita del equipo; contradice el paso 0.1 de las guías (que pedía versionarlas en `docs/guias/`).
 - **Impacto:** cada persona mantiene su copia local.
+
+### D-04: las guías sí se versionan en `docs/guias/` (Persona B, 2026-11-15) · reemplaza a D-03
+- **Qué:** `docs/guias/GUIA_PERSONA_A.md` y `docs/guias/GUIA_PERSONA_B.md` entran a Git, como indica el paso 0.1 de las guías.
+- **Por qué:** decisión del equipo para que cada uno vea qué hace el otro.
+
+### D-05: Persona B apoya a Persona A en las tareas A0–A3 (equipo, 2026-11-15)
+- **Qué:** por acuerdo entre A y B, Persona B implementa A0 (config), A1 (carga y limpieza), A2 (EDA) y A3 (exógenas, series agregadas y `history.parquet`).
+- **Cómo:** commits con prefijo `cross:` y PR hacia `dev` para que A los revise. A4 en adelante sigue siendo solo de A.
+- **Impacto:** adelanta las entregas que bloqueaban la app y la GRU (P-01, P-03).
