@@ -1,7 +1,7 @@
 # Datos crudos y procesados (se regeneran con src/data/make_dataset.py)
-data/
+/data/
 
-# Entornos y cachés de Python
+# Entornos y cachÃ©s de Python
 .venv/
 __pycache__/
 *.py[cod]
@@ -9,7 +9,7 @@ __pycache__/
 .ruff_cache/
 *.ipynb_checkpoints
 
-# Secretos y configuración local
+# Secretos y configuraciÃ³n local
 .env
 .streamlit/secrets.toml
 CLAUDE.md
@@ -17,4 +17,4 @@ CLAUDE.md
 # Capturas de pruebas de navegador
 .playwright-mcp/
 
-# IMPORTANTE: artifacts/ SÍ se versiona (la app lee de ahí)
+# IMPORTANTE: artifacts/ SÃ se versiona (la app lee de ahÃ­)
