@@ -1,14 +1,13 @@
 """Regenera `data/processed/rossmann.parquet` desde cero.
 
 Uso: `python -m src.data.make_dataset`  (descarga de Kaggle si faltan los CSV).
-Requisitos: `~/.kaggle/kaggle.json` (o variables KAGGLE_USERNAME/KAGGLE_KEY) y haber aceptado
-las reglas de la competencia en https://www.kaggle.com/competitions/rossmann-store-sales/rules
+Requisitos: credenciales de Kaggle (`kaggle auth login`, o un token en `~/.kaggle/access_token`
+o en la variable KAGGLE_API_TOKEN; también sirve el clásico `~/.kaggle/kaggle.json`) y haber
+aceptado las reglas en https://www.kaggle.com/competitions/rossmann-store-sales/rules
 """
 
 from __future__ import annotations
 
-import subprocess
-import sys
 import zipfile
 from pathlib import Path
 
@@ -25,18 +24,11 @@ def download(raw_dir: Path = DATA_RAW) -> None:
     raw_dir.mkdir(parents=True, exist_ok=True)
     if all((raw_dir / f).exists() for f in RAW_FILES):
         return
-    cmd = [
-        sys.executable,
-        "-m",
-        "kaggle",
-        "competitions",
-        "download",
-        "-c",
-        COMPETITION,
-        "-p",
-        str(raw_dir),
-    ]
-    subprocess.run(cmd, check=True)
+    from kaggle.api.kaggle_api_extended import KaggleApi
+
+    api = KaggleApi()
+    api.authenticate()
+    api.competition_download_files(COMPETITION, path=str(raw_dir), quiet=False)
     for z in raw_dir.glob("*.zip"):
         with zipfile.ZipFile(z) as fh:
             fh.extractall(raw_dir)
