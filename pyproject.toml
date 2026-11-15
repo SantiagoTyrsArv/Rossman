@@ -12,10 +12,14 @@ target-version = ["py311"]
 line-length = 100
 target-version = "py311"
 extend-exclude = ["notebooks"]
+src = ["."]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "B", "UP"]
 ignore = ["E402"]  # las páginas de Streamlit ajustan sys.path antes de importar
+
+[tool.ruff.lint.isort]
+known-first-party = ["src", "app"]
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
