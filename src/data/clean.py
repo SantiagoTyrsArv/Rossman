@@ -33,9 +33,7 @@ def clean_store(store: pd.DataFrame) -> pd.DataFrame:
     """
     st = store.copy()
     st["comp_dist_missing"] = st["CompetitionDistance"].isna().astype("int8")
-    st["CompetitionDistance"] = st["CompetitionDistance"].fillna(
-        st["CompetitionDistance"].median()
-    )
+    st["CompetitionDistance"] = st["CompetitionDistance"].fillna(st["CompetitionDistance"].median())
     no_date = st["CompetitionOpenSinceYear"].isna() | st["CompetitionOpenSinceMonth"].isna()
     st["comp_open_assumed"] = no_date.astype("int8")
     st["CompetitionOpenSinceYear"] = st["CompetitionOpenSinceYear"].fillna(1900).astype(int)
@@ -93,9 +91,12 @@ def impute_missing_store_days(df: pd.DataFrame) -> pd.DataFrame:
     static = df.drop_duplicates("Store").set_index("Store")[store_cols]
     miss = miss.join(day, on="Date").join(static, on="Store")
     open_by_type = df.groupby(["StoreType", "Date"])["Open"].mean().ge(0.5).astype("int8")
-    miss["Open"] = open_by_type.reindex(
-        pd.MultiIndex.from_frame(miss[["StoreType", "Date"]])
-    ).fillna(1).to_numpy().astype("int8")
+    miss["Open"] = (
+        open_by_type.reindex(pd.MultiIndex.from_frame(miss[["StoreType", "Date"]]))
+        .fillna(1)
+        .to_numpy()
+        .astype("int8")
+    )
     miss["DayOfWeek"] = (miss["Date"].dt.dayofweek + 1).astype("int8")
 
     sales = np.zeros(len(miss))

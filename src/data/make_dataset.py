@@ -25,8 +25,17 @@ def download(raw_dir: Path = DATA_RAW) -> None:
     raw_dir.mkdir(parents=True, exist_ok=True)
     if all((raw_dir / f).exists() for f in RAW_FILES):
         return
-    cmd = [sys.executable, "-m", "kaggle", "competitions", "download", "-c", COMPETITION,
-           "-p", str(raw_dir)]
+    cmd = [
+        sys.executable,
+        "-m",
+        "kaggle",
+        "competitions",
+        "download",
+        "-c",
+        COMPETITION,
+        "-p",
+        str(raw_dir),
+    ]
     subprocess.run(cmd, check=True)
     for z in raw_dir.glob("*.zip"):
         with zipfile.ZipFile(z) as fh:
