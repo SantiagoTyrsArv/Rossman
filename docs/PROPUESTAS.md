@@ -16,7 +16,7 @@
 - **Situación actual:** `src/config.py` (compartido, lo crea A en la tarea A0) todavía no existe.
 - **Propuesta:** mientras tanto, `app/utils/settings.py` y `src/models/gru.py` intentan `from src.config import ...` y, si falla, usan una copia local de las constantes de la sección 5.6 del contrato. Cuando exista `src/config.py` se usa automáticamente; el respaldo local se borra después.
 - **Afecta a:** solo mi área (no se crea nada en `src/config.py`).
-- **Decisión del equipo:** pendiente (A debe crear `src/config.py` con el contenido exacto de 5.6).
+- **Decisión del equipo:** resuelta (2026-11-15): `src/config.py` creado con el contenido de 5.6 (A0, D-05). El respaldo local se puede quitar cuando A apruebe el PR.
 
 ### P-02: dependencia de `src/evaluation/metrics.py` y `backtest.py` (2026-11-15, detectada por Persona B)
 - **Situación actual:** `compute_all` y `write_forecast` de A no existen aún.
