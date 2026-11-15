@@ -17,8 +17,4 @@ CLAUDE.md
 # Capturas de pruebas de navegador
 .playwright-mcp/
 
-# Guías de trabajo locales
-GUIA_PERSONA_A.md
-GUIA_PERSONA_B.md
-
 # IMPORTANTE: artifacts/ SÍ se versiona (la app lee de ahí)
