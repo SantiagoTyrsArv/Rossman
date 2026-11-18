@@ -22,6 +22,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from joblib import Parallel, delayed
+from statsmodels.tsa.statespace import kalman_filter as kf
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 from statsmodels.tsa.stattools import adfuller, kpss
 
@@ -49,6 +50,17 @@ SEASONAL_D = 1  # justificado en notebooks/02_estacionalidad.ipynb
 TOP_BY_AIC = 5  # finalistas por AIC que pasan a compararse por RMSE de validación
 MAX_FORECAST_RATIO = 3.0  # un pronóstico > 3 veces el máximo histórico se considera inestable
 ALPHA = 0.05
+MIN_PARTIAL_OPEN_SHARE = 0.05  # P-05: desde esta fracción de días con apertura parcial
+# P-06: el pkl conserva solo lo necesario para pronosticar (de ~40 MB a ~0,65 MB)
+COMPACT_MEMORY = (
+    kf.MEMORY_NO_PREDICTED_MEAN
+    | kf.MEMORY_NO_PREDICTED_COV
+    | kf.MEMORY_NO_FILTERED_MEAN
+    | kf.MEMORY_NO_FILTERED_COV
+    | kf.MEMORY_NO_GAIN
+    | kf.MEMORY_NO_SMOOTHING
+    | kf.MEMORY_NO_STD_FORECAST
+)
 SELECTION_FILE = ARTIFACTS / "models" / "arima_selection.json"
 GRID_FILE = ROOT / "experiments" / "arima_grid.csv"
 EXPERIMENTS_FILE = ROOT / "experiments" / "experiments.csv"
@@ -74,6 +86,18 @@ def level_data(history: pd.DataFrame, uid: str) -> tuple[pd.Series, pd.DataFrame
         raise ValueError(f"No hay historia para {uid}")
     y = s.set_index("ds")["y"].astype(float).asfreq("D")
     return y, build_exog(s).asfreq("D")
+
+
+def training_target(y: pd.Series, exog: pd.DataFrame) -> pd.Series:
+    """P-05: en niveles con apertura parcial frecuente, los cierres totales pasan a faltantes.
+
+    Allí log1p(0) = 0 queda muy lejos de un domingo con pocas tiendas abiertas, y `open_share`,
+    que es lineal, no puede explicar ese salto. Tiendas individuales y `type_c` no cambian.
+    """
+    open_share = exog.loc[y.index, "open_share"]
+    if open_share.between(0, 0.5, inclusive="neither").mean() < MIN_PARTIAL_OPEN_SHARE:
+        return y
+    return y.mask((y == 0) & (open_share == 0))
 
 
 def choose_d(y_log: pd.Series, alpha: float = ALPHA) -> int:
@@ -112,12 +136,14 @@ def fit_model(y: pd.Series, exog: pd.DataFrame | None, spec: Spec, maxiter: int 
 
 
 def forecast_euros(res, steps: int, exog: pd.DataFrame | None = None) -> pd.DataFrame:
-    """Pronóstico en euros con intervalo al 95 %, sin valores negativos."""
+    """Pronóstico en euros con intervalo al 95 %, sin negativos y 0 si todo está cerrado."""
     fc = res.get_forecast(steps=steps, exog=exog)
     ci = np.asarray(fc.conf_int(alpha=ALPHA), float)
     values = np.column_stack([np.asarray(fc.predicted_mean, float), ci[:, 0], ci[:, 1]])
     with np.errstate(over="ignore"):
         values = np.clip(np.expm1(values), 0, None)
+    if exog is not None:
+        values[exog["open_share"].to_numpy() == 0] = 0.0
     return pd.DataFrame(values, columns=["y_hat", "lo_95", "hi_95"])
 
 
@@ -140,7 +166,8 @@ def evaluate_candidate(
         "source": source,
     }
     try:
-        res = fit_model(y_tr, exog.loc[:TRAIN_END] if use_exog else None, spec)
+        target = training_target(y_tr, exog)
+        res = fit_model(target, exog.loc[:TRAIN_END] if use_exog else None, spec)
         x_val = exog.loc[y_val.index] if use_exog else None
         y_hat = forecast_euros(res, HORIZON, x_val)["y_hat"].to_numpy()
         ok = bool(res.mle_retvals.get("converged", False)) and _is_stable(y_hat, y_tr)
@@ -269,7 +296,8 @@ def save_simulator_model(res, uid: str, spec: Spec, root: Path = ARTIFACTS) -> P
     folder = Path(root) / "models"
     folder.mkdir(parents=True, exist_ok=True)
     path = folder / f"sarimax_{uid}.pkl"
-    res.save(path)
+    compact = res.model.filter(res.params, cov_type="none", conserve_memory=COMPACT_MEMORY)
+    compact.save(path)
     meta = {
         "unique_id": uid,
         "order": list(spec.order),
@@ -290,14 +318,15 @@ def final_level(
     frames = []
     for name, cutoff in (("val", TRAIN_END), ("test", VAL_END)):
         ds = split_dates(name)
-        res = fit_model(y.loc[:cutoff], exog.loc[:cutoff] if use_exog else None, spec)
+        target = training_target(y.loc[:cutoff], exog)
+        res = fit_model(target, exog.loc[:cutoff] if use_exog else None, spec)
         fc = forecast_euros(res, HORIZON, exog.loc[ds] if use_exog else None)
         frames.append(_frame(uid, model, name, ds, y.loc[ds].to_numpy(), fc))
     if use_exog:
         ds = split_dates("future")
-        res = fit_model(y.loc[:TEST_END], exog.loc[:TEST_END], spec)
-        save_simulator_model(res, uid, spec, root)
+        res = fit_model(training_target(y.loc[:TEST_END], exog), exog.loc[:TEST_END], spec)
         fc = forecast_euros(res, HORIZON, build_future_exog(uid, ds)[EXOG_COLS])
+        save_simulator_model(res, uid, spec, root)
         frames.append(_frame(uid, model, "future", ds, np.nan, fc))
     return pd.concat(frames, ignore_index=True)
 

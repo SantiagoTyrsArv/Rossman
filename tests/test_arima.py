@@ -74,6 +74,39 @@ def test_pick_best_uses_validation_among_aic_finalists():
         arima.pick_best([rows[3]])
 
 
+def test_training_target_masks_full_closures_only_with_partial_opening():
+    idx = pd.date_range("2015-01-01", periods=20, freq="D")
+    y = pd.Series(100.0, index=idx)
+    y.iloc[0] = 0.0
+    share = pd.Series(1.0, index=idx)
+    share.iloc[0] = 0.0
+    assert arima.training_target(y, pd.DataFrame({"open_share": share})).equals(y)  # tienda
+    share.iloc[1:4] = 0.02
+    masked = arima.training_target(y, pd.DataFrame({"open_share": share}))
+    assert np.isnan(masked.iloc[0]) and masked.iloc[1:].eq(100.0).all()
+
+
+def test_forecast_is_zero_when_everything_is_closed(history):
+    y, x = arima.level_data(history, "total")
+    res = arima.fit_model(y.loc[:VAL_END], x.loc[:VAL_END], SPEC)
+    future = x.iloc[-HORIZON:].copy()
+    future.iloc[0, future.columns.get_loc("open_share")] = 0.0
+    fc = arima.forecast_euros(res, HORIZON, future)
+    assert fc.iloc[0].eq(0).all() and fc["y_hat"].iloc[1:].gt(0).all()
+
+
+def test_compact_model_keeps_forecast_and_is_small(history, tmp_path):
+    y, x = arima.level_data(history, "total")
+    res = arima.fit_model(y, x, SPEC)
+    future = x.iloc[-HORIZON:].set_axis(pd.date_range(FUTURE_START, FUTURE_END))
+    full = res.get_forecast(HORIZON, exog=future)
+    path = arima.save_simulator_model(res, "total", SPEC, tmp_path)
+    small = load_pickle(path).get_forecast(HORIZON, exog=future)
+    np.testing.assert_allclose(small.predicted_mean, full.predicted_mean)
+    np.testing.assert_allclose(small.conf_int(), full.conf_int())
+    assert path.stat().st_size < 2 * 1024**2
+
+
 def test_evaluate_candidate_ignores_data_after_validation(history):
     y, x = arima.level_data(history, "total")
     changed = y.copy()
