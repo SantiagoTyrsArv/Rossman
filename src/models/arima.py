@@ -296,8 +296,10 @@ def save_simulator_model(res, uid: str, spec: Spec, root: Path = ARTIFACTS) -> P
     folder = Path(root) / "models"
     folder.mkdir(parents=True, exist_ok=True)
     path = folder / f"sarimax_{uid}.pkl"
-    compact = res.model.filter(res.params, cov_type="none", conserve_memory=COMPACT_MEMORY)
-    compact.save(path)
+    # Un clon limpio: el modelo ajustado retiene en memoria las matrices del filtro
+    data = res.model.data
+    clean = res.model.clone(data.orig_endog, exog=data.orig_exog)
+    clean.filter(res.params, cov_type="none", conserve_memory=COMPACT_MEMORY).save(path)
     meta = {
         "unique_id": uid,
         "order": list(spec.order),
