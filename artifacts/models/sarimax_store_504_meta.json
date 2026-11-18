@@ -1,0 +1,31 @@
+{
+  "unique_id": "store_504",
+  "order": [
+    2,
+    0,
+    1
+  ],
+  "seasonal_order": [
+    1,
+    1,
+    1,
+    7
+  ],
+  "exog_cols": [
+    "promo_share",
+    "open_share",
+    "school_holiday_share",
+    "sh_a",
+    "sh_b",
+    "sh_c",
+    "promo2_share",
+    "f_sin1",
+    "f_cos1",
+    "f_sin2",
+    "f_cos2",
+    "f_sin3",
+    "f_cos3"
+  ],
+  "log_target": true,
+  "train_end": "2015-07-31"
+}
