@@ -50,3 +50,62 @@
 - **Recomendación de Claude:** aplicar como **escenario predefinido** en la app ("Calendario planificado") sin cambiar el valor por defecto de `build_future_exog`; así no se rompe el contrato.
 - **Afecta a:** contrato y área de A (si se cambia el valor por defecto); solo área de B (si es un escenario de la app).
 - **Decisión del equipo:** pendiente.
+
+### P-05: no entrenar con los días de cierre total en `type_a` y `type_d` (2026-11-18, detectada por Persona A)
+- **Situación actual:** en esos tipos, un festivo con todas las tiendas cerradas vale `log1p(0) = 0`, mientras que un domingo con pocas tiendas abiertas vale entre 9 y 10. `open_share` es lineal y no puede explicar ese salto (0 frente a ~0,01), así que esos días disparan la varianza del modelo (`sigma2` de 1,6 frente a 0,13 en `type_a`).
+- **Propuesta:** en los niveles con días de apertura parcial (`0 < open_share < 0,5`) y días con `y = 0`, tratar esos ceros como faltantes al ajustar (el filtro de Kalman los admite) y pronosticar 0 cuando `open_share = 0`. Afecta solo a `type_a` y `type_d`.
+- **Comparación (solo validación; la prueba no se ha usado):**
+
+| Criterio | Actual | Propuesta |
+| --- | --- | --- |
+| Requerimientos | Cumple | Cumple |
+| Gratis / despliegue | Sí | Sí, sin cambios |
+| Cronograma | 0 h | ~1 h |
+| Sin fuga / partición temporal | Sí | Sí: solo cambia cómo se usa el entrenamiento; `open_share` ya se conoce de antemano |
+| Cambia el contrato | No | No |
+| Afecta al otro | No | No |
+| RMSE val SARIMAX `type_a` | 1 186 937 (MAPE 28,8 %) | 910 692 (MAPE 19,8 %), −23,3 % |
+| RMSE val SARIMAX `type_d` | 541 852 (MAPE 27,1 %) | 340 163 (MAPE 17,5 %), −37,2 % |
+| RMSE val SARIMA `type_a` / `type_d` | 1 877 945 / 1 076 608 | 1 262 880 / 771 206 (−32,8 % / −28,4 %) |
+| Explicable en el curso | Sí | Sí (tratamiento de valores atípicos estructurales) |
+| Riesgo | Modelo mal calibrado en dos niveles | Bajo; en la app, un día de cierre total mostraría una venta pequeña, no 0 exacto |
+
+- **Recomendación de Claude:** aplicar ahora, antes de generar los pronósticos de prueba.
+- **Afecta a:** solo mi área.
+- **Decisión del equipo:** pendiente.
+
+### P-06: guardar los `sarimax_*.pkl` sin las matrices históricas del filtro (2026-11-18, detectada por Persona A)
+- **Situación actual:** con `results.save` normal cada pkl pesa entre 33 y 46 MB, por encima del límite de 25 MB de la tarea A7 (unos 400 MB para los 10 niveles). `remove_data=True` falla al pronosticar y `low_memory=True` deja los intervalos en NaN.
+- **Propuesta:** reconstruir el resultado final con `model.filter(params, cov_type="none", conserve_memory=...)`, conservando solo lo necesario para pronosticar.
+- **Comparación:**
+
+| Criterio | Actual | Propuesta |
+| --- | --- | --- |
+| Tamaño por modelo | 33-46 MB | ~0,65 MB |
+| Pronóstico e intervalo tras cargar | Referencia | Idénticos (diferencia 0 en 3 niveles probados) |
+| Gratis / despliegue | Riesgo por peso | Sí |
+| Cronograma | — | ~0,5 h |
+| Sin fuga / partición temporal | Sí | Sí |
+| Cambia el contrato | No | No: sigue siendo `results.save` y `load_pickle` |
+| Afecta al otro | No | No: `get_forecast` y `conf_int` funcionan igual |
+| Riesgo | Repositorio pesado | El pkl ya no sirve para `summary()`; los coeficientes se reportan en el notebook 04 |
+
+- **Recomendación de Claude:** aplicar ahora.
+- **Afecta a:** solo mi área.
+- **Decisión del equipo:** pendiente.
+
+### P-07: festivos escolares por defecto en `build_future_exog` (2026-11-18, detectada por Persona A)
+- **Situación actual:** por defecto `school_holiday_share = 0` en todo el futuro, pero entre el 01/08 y el 11/09/2014 fue 0,47 de media. Con el modelo de `total`, usar 0 en validación sube el RMSE de 738 378 a 780 637 (+5,7 %), aun cuando allí la media real era solo 0,07.
+- **Propuesta:** usar por defecto la proporción del mismo periodo del año anterior.
+- **Comparación:** cumple los requerimientos, no usa datos futuros y toma ~1 h, pero cambia el comportamiento por defecto de la sección 5.5 y, con él, el escenario base del simulador y las entradas de la GRU.
+- **Recomendación de Claude:** aplicar cuando A y B lo acuerden; mientras tanto se mantiene lo que dice la guía.
+- **Afecta a:** contrato y área del otro.
+- **Decisión del equipo:** pendiente.
+
+### P-08: fijar versiones en `app/requirements.txt` (2026-11-18, detectada por Persona A)
+- **Situación actual:** la app instala `statsmodels>=0.14.2`, `pandas>=2.2` y `numpy>=1.26`. Los pkl se generan con statsmodels 0.15.0, pandas 2.3.3 y numpy 2.4.6, y un pickle puede no cargar con otras versiones.
+- **Propuesta:** fijar esas tres versiones en `app/requirements.txt`.
+- **Comparación:** no cambia métricas ni contrato, toma minutos y evita que el simulador falle en el despliegue.
+- **Recomendación de Claude:** aplicar antes de desplegar; lo decide Persona B porque el archivo es suyo.
+- **Afecta a:** área del otro.
+- **Decisión del equipo:** pendiente.
