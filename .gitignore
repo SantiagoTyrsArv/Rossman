@@ -1,0 +1,20 @@
+# Datos crudos y procesados (se regeneran con src/data/make_dataset.py)
+/data/
+
+# Entornos y cachÃ©s de Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+*.ipynb_checkpoints
+
+# Secretos y configuraciÃ³n local
+.env
+.streamlit/secrets.toml
+CLAUDE.md
+
+# Capturas de pruebas de navegador
+.playwright-mcp/
+
+# IMPORTANTE: artifacts/ SÃ se versiona (la app lee de ahÃ­)

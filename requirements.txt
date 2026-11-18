@@ -1,0 +1,14 @@
+# Entorno de entrenamiento y notebooks (COMPARTIDO). La app usa app/requirements.txt.
+-r app/requirements.txt
+scikit-learn>=1.5
+joblib>=1.4
+statsforecast>=1.7
+matplotlib>=3.8
+seaborn>=0.13
+jupyter>=1.0
+kaggle>=1.6
+pytest>=8
+ruff>=0.6
+black>=24
+pre-commit>=3.7
+# TensorFlow se instala en Colab/Kaggle (ya viene incluido); localmente: pip install tensorflow
