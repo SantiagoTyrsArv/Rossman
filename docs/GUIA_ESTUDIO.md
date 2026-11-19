@@ -100,13 +100,16 @@ algunas tiendas, que se reactiva en meses fijos (`PromoInterval`).
 ## 4. Estacionalidad y estacionariedad
 
 **¿Cómo eligieron s, d y D?**
+
 - **s = 7:** ACF de 0,80 en el lag 7 y fuerza estacional STL de 0,80 en el total.
 - **D = 1:** la diferencia estacional (Δ₇) elimina esa autocorrelación.
 - **d:** con ADF y KPSS. d = 0 en el total y en los tipos a, c y d; d = 1 en el tipo b (D-14).
 
 **¿Qué hipótesis contrastan ADF y KPSS?**
+
 - **ADF:** H0 = hay raíz unitaria (no estacionaria). Rechazar → estacionaria.
 - **KPSS:** H0 = es estacionaria. Rechazar → no estacionaria.
+
 Se usan juntas porque tienen hipótesis opuestas. Regla: d = 1 si ADF no rechaza **o** KPSS rechaza.
 
 **¿Para qué sirve la descomposición STL?**
@@ -209,6 +212,7 @@ el dropout solo está en el codificador: no son un 95 % calibrado.
 ## 7. Evaluación
 
 **¿Qué mide cada métrica?**
+
 - **RMSE:** raíz del error cuadrático medio; penaliza más los errores grandes. En euros.
 - **MAE:** error absoluto medio; más robusto a atípicos. En euros.
 - **MAPE:** error porcentual medio; sin escala, sirve para comparar niveles distintos.
