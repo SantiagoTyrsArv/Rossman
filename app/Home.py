@@ -50,8 +50,27 @@ c2.markdown("**¿Cuánto suben con promos?**\n\nSimulación de escenarios con SA
 c3.markdown("**¿Quién responde mejor?**\n\nComparación por tipo de tienda.")
 c4.markdown("**¿Cuándo invertir?**\n\nEstacionalidad semanal y anual.")
 
-st.subheader("Metodología CRISP-DM")
-# TODO(B7): reemplazar con los textos de metodología que entregue Persona A (tarea A8)
+st.subheader("Metodología y resultados")
+# Texto de Persona A: docs/INFORME_PERSONA_A.md, sección 8 (tarea A8)
+st.markdown(
+    "**Metodología.** Seguimos CRISP-DM con datos de Rossmann, de enero de 2013 a julio de 2015. "
+    "Limpiamos el hueco de 180 tiendas en 2014 sin usar información futura y separamos los datos "
+    "por tiempo: entrenamiento, validación y prueba, estos dos últimos de 42 días cada uno.\n\n"
+    "Comparamos un baseline que repite la última semana, SARIMA, SARIMAX y una red GRU. SARIMAX "
+    "usa la estacionalidad semanal, términos anuales de Fourier y variables conocidas de antemano: "
+    "promociones, aperturas y festivos. Nunca usa el número de clientes, porque no se conoce al "
+    "pronosticar. Los órdenes se eligieron solo con validación y la prueba se usó una vez.\n\n"
+    "**Resultados.** SARIMAX supera al baseline y logra un MAPE menor a 15 % en los 10 niveles "
+    "evaluados. En la venta total, el MAPE es 6,8 % frente a 17,4 % del baseline. La GRU logra "
+    "5,5 % en el total, pero su diferencia con SARIMAX no es estadísticamente significativa "
+    "(Wilcoxon, p = 0,29). El periodo de prueba no incluye festivos, y en validación los tipos a "
+    "y d quedaron en 19,0 % y 17,5 %.\n\n"
+    "**Cómo leer el simulador.** La promoción se asocia con cerca de 39 % más venta en el total, y "
+    "el efecto varía por tipo y tienda. Es una estimación histórica: no prueba causalidad ni "
+    "considera costos o margen. Los datos terminan el 31/07/2015."
+)
+
+st.subheader("Fases CRISP-DM")
 phases = {
     "1. Comprensión del negocio": "Planificar promociones y presupuesto de marketing con un "
     "pronóstico confiable de la demanda diaria.",
