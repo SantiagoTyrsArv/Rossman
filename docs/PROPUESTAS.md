@@ -22,13 +22,13 @@
 - **Situación actual:** `compute_all` y `write_forecast` de A no existen aún.
 - **Propuesta:** `src/models/gru.py` importa `compute_all` de A si existe; si no, usa un stub local marcado `# TODO quitar` con la misma fórmula (MAPE solo con y > 0). Las métricas definitivas de `gru.json` se regeneran con la función de A antes de la evaluación final.
 - **Afecta a:** solo mi área.
-- **Decisión del equipo:** pendiente.
+- **Decisión del equipo:** resuelta (2026-11-18): A entregó `metrics.py` y `backtest.py` (A5). `gru.py` ya usa el `compute_all` de A, así que `gru.json` se calculó con la función del contrato.
 
 ### P-03: dependencia de `history.parquet`, `sarimax_*.pkl` y `build_future_exog` (2026-11-15, detectada por Persona B)
 - **Situación actual:** no existen todavía.
 - **Propuesta:** la app usa `app/mock_data.py` (mismo esquema del contrato) y lo indica con el aviso "DATOS DE PRUEBA". El simulador cambia solo a SARIMAX real cuando existen el pkl, el meta y `build_future_exog`.
 - **Afecta a:** solo mi área.
-- **Decisión del equipo:** parcialmente resuelta (2026-11-15): ya existen `history.parquet` y `build_future_exog` (A3). Faltan `sarimax_*.pkl` y su meta (A7).
+- **Decisión del equipo:** resuelta (2026-11-18): ya existen `history.parquet` y `build_future_exog` (A3) y los 10 `sarimax_*.pkl` con su meta (A7). La app y el simulador usan datos reales, también en el despliegue público.
 
 ### P-04: calendario de promos de `test.csv` como escenario base del futuro (2026-11-15, detectada por Persona B)
 - **Situación actual:** `build_future_exog` usa por defecto el patrón histórico (alternancia quincenal desde la última semana con promo, 27/07/2015 → promo la semana del 10/08). El calendario real planificado en `test.csv` difiere en 34 de 48 días abiertos: tiene promo las semanas del 03/08, 17/08, 31/08 y 14/09 (rompe la alternancia, como ya pasó el 27/04 y el 04/05).
