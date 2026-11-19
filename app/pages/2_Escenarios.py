@@ -33,7 +33,15 @@ PRESETS = [
     "Promo intensiva (lun–vie todas las semanas)",
     "Personalizado",
 ]
-preset = st.sidebar.radio("Promociones", PRESETS)
+preset = st.sidebar.radio(
+    "Promociones",
+    PRESETS,
+    help=(
+        "Los días elegidos **reemplazan** el calendario de promos de la base, no se suman a él. "
+        "La base ya trae el patrón histórico (unos 15 días con promo en 42 días): un escenario "
+        "con menos días de promo que ese puede vender menos que la base."
+    ),
+)
 
 promo_days: set[pd.Timestamp] | None
 if preset == "Patrón histórico":
@@ -53,6 +61,14 @@ else:
     start, end = rng if isinstance(rng, tuple) and len(rng) == 2 else (rng, rng)
     idx = {DOW_ES.index(d) for d in dows}
     promo_days = {d for d in dates if start <= d.date() <= end and d.dayofweek in idx}
+
+if promo_days is None:
+    st.sidebar.caption("Escenario = base: mismo calendario de promos que el histórico.")
+else:
+    st.sidebar.caption(
+        f"Escenario con **{len(promo_days)} días de promo** en {horizon} días. Estos días "
+        "reemplazan el calendario histórico de la base; el resto queda sin promo."
+    )
 
 with st.sidebar.expander("Festivos"):
     use_school = st.checkbox("Vacaciones escolares", value=False)
