@@ -108,7 +108,7 @@
 - **Comparación:** no cambia métricas ni contrato, toma minutos y evita que el simulador falle en el despliegue.
 - **Recomendación de Claude:** aplicar antes de desplegar; lo decide Persona B porque el archivo es suyo.
 - **Afecta a:** área del otro.
-- **Decisión del equipo:** pendiente.
+- **Decisión del equipo:** aprobada por Persona B (dueña del archivo) y aplicada el 2026-11-18 como D-12 (PR #7). Verificado en la CI y en el despliegue público.
 
 ### P-09: decodificador por día en la GRU (2026-11-18, detectada por Persona B)
 - **Situación actual:** la GRU v1 (`build_model`) aplana las exógenas futuras (42 × 15 = 630 entradas) y las pasa por una sola `Dense`. Así tiene que aprender por separado, para cada una de las 42 posiciones del horizonte, el efecto de festivo, domingo o promo. Con 761 ventanas no le alcanza: hay **underfitting** (MAPE dentro del entrenamiento 55,9 %, pérdida de train ≈ val) y en validación da un MAPE de 62–96 %. En los festivos (14/05 y 25/05) predice 2,3–2,9 M€ cuando la venta real es ~0,3 M€.
