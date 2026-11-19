@@ -30,7 +30,7 @@ st.subheader(f"Ventas históricas · {level_label(uid)}")
 agg = st.radio("Agregación", ["Diaria", "Semanal", "Mensual"], horizontal=True)
 rule = {"Diaria": None, "Semanal": "W-SUN", "Mensual": "MS"}[agg]
 view = s if rule is None else s.resample(rule).sum()
-st.plotly_chart(history_figure(view.reset_index()), use_container_width=True)
+st.plotly_chart(history_figure(view.reset_index()), width="stretch")
 
 
 # --- STL ------------------------------------------------------------------------------------
@@ -49,7 +49,7 @@ st.subheader("Descomposición STL (entrenamiento, log1p de las ventas)")
 parts = stl_parts(uid, train)
 st.plotly_chart(
     stl_figure(parts.index, parts["observed"], parts["trend"], parts["seasonal"], parts["resid"]),
-    use_container_width=True,
+    width="stretch",
 )
 var_resid = parts["resid"].var()
 f_season = max(0.0, 1 - var_resid / (parts["seasonal"] + parts["resid"]).var())
@@ -77,7 +77,7 @@ with col_h:
     pivot.columns = MONTH_ES
     st.plotly_chart(
         heatmap_figure(pivot, "Venta promedio por día de la semana y mes (días abiertos)"),
-        use_container_width=True,
+        width="stretch",
     )
 with col_p:
     rows = []
@@ -113,7 +113,7 @@ with col_p:
         xaxis_title="Tipo de tienda",
         legend=dict(orientation="h", yanchor="bottom", y=1.02, x=0),
     )
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")
     st.caption(
         "Comparación descriptiva (no causal): los días con promo también difieren en día de la "
         "semana y época del año. El efecto aislado lo estima el SARIMAX."
@@ -135,10 +135,8 @@ z = z.dropna()
 nlags = 60
 conf = 1.96 / np.sqrt(len(z))
 col_a, col_b = st.columns(2)
-col_a.plotly_chart(correlogram(acf(z, nlags=nlags), conf, "ACF"), use_container_width=True)
-col_b.plotly_chart(
-    correlogram(pacf(z, nlags=nlags, method="ywm"), conf, "PACF"), use_container_width=True
-)
+col_a.plotly_chart(correlogram(acf(z, nlags=nlags), conf, "ACF"), width="stretch")
+col_b.plotly_chart(correlogram(pacf(z, nlags=nlags, method="ywm"), conf, "PACF"), width="stretch")
 st.caption(
     "Líneas punteadas: banda de significancia aproximada ±1,96/√n. Picos en 7, 14, 21… "
     "indican estacionalidad semanal."

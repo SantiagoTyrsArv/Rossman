@@ -80,7 +80,7 @@ with tab_fc:
     recent = hist.loc[: start - pd.Timedelta(days=1)].iloc[-90:].reset_index()
     st.plotly_chart(
         forecast_figure(recent, fc, sel.models, "Últimos 90 días reales y pronóstico"),
-        use_container_width=True,
+        width="stretch",
     )
     table = fc.pivot_table(index="ds", columns="model", values="y_hat").rename(columns=MODEL_LABELS)
     if sel.split == "test":
@@ -92,7 +92,7 @@ with tab_fc:
         mime="text/csv",
     )
     with st.expander("Ver tabla diaria"):
-        st.dataframe(table.style.format("{:,.0f}"), use_container_width=True)
+        st.dataframe(table.style.format("{:,.0f}"), width="stretch")
 
 with tab_cmp:
     st.caption("Todas las líneas sobre el periodo de prueba (20/06–31/07/2015).")
@@ -101,7 +101,7 @@ with tab_cmp:
     recent = hist.loc[: SPLIT_START["test"] - pd.Timedelta(days=1)].iloc[-28:].reset_index()
     st.plotly_chart(
         forecast_figure(recent, test, models_all, "Modelos vs. real en prueba"),
-        use_container_width=True,
+        width="stretch",
     )
 
     met = met_all[met_all["unique_id"] == sel.unique_id]
@@ -121,7 +121,7 @@ with tab_cmp:
             met.style.format(
                 {"RMSE (€)": "{:,.0f}", "MAE (€)": "{:,.0f}", "MAPE (%)": "{:.2f}"}
             ).highlight_min(axis=0, props="font-weight:700; background-color:rgba(31,158,118,.18)"),
-            use_container_width=True,
+            width="stretch",
         )
         st.caption("En verde, el mejor modelo por métrica. Menor es mejor.")
 
