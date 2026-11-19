@@ -9,6 +9,29 @@ simulación de escenarios de promoción y visualización temporal. Metodología:
 - **Objetivo SMART:** superar al baseline ingenuo estacional con **MAPE < 15 %** en el periodo
   de prueba. ✅ Cumplido por SARIMAX en los 10 niveles y por la GRU en `total`.
 
+## Metodología y resultados
+
+**Metodología.** Seguimos CRISP-DM con datos de Rossmann, de enero de 2013 a julio de 2015. Limpiamos
+el hueco de 180 tiendas en 2014 sin usar información futura y separamos los datos por tiempo:
+entrenamiento, validación y prueba, estos dos últimos de 42 días cada uno.
+
+Comparamos un baseline que repite la última semana, SARIMA, SARIMAX y una red GRU. SARIMAX usa la
+estacionalidad semanal, términos anuales de Fourier y variables conocidas de antemano: promociones,
+aperturas y festivos. Nunca usa el número de clientes, porque no se conoce al pronosticar. Los órdenes
+se eligieron solo con validación y la prueba se usó una vez.
+
+**Resultados.** SARIMAX supera al baseline y logra un MAPE menor a 15 % en los 10 niveles evaluados. En
+la venta total, el MAPE es 6,8 % frente a 17,4 % del baseline. La GRU logra 5,5 % en el total, pero su
+diferencia con SARIMAX no es estadísticamente significativa (Wilcoxon, p = 0,29). El periodo de prueba
+no incluye festivos, y en validación los tipos a y d quedaron en 19,0 % y 17,5 %.
+
+**Cómo leer el simulador.** La promoción se asocia con cerca de 39 % más venta en el total, y el efecto
+varía por tipo y tienda. Es una estimación histórica: no prueba causalidad ni considera costos o margen.
+Los datos terminan el 31/07/2015.
+
+El informe completo de datos, estacionalidad, modelos estadísticos y evaluación está en
+[`docs/INFORME_PERSONA_A.md`](docs/INFORME_PERSONA_A.md).
+
 ## Capturas
 
 | Dashboard | Escenarios | Series |
