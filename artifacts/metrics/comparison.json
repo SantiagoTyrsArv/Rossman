@@ -14,8 +14,15 @@
       "better_model": "sarimax"
     },
     "sarimax_vs_gru": {
-      "status": "pendiente",
-      "reason": "faltan pron\u00f3sticos de sarimax o gru"
+      "status": "ok",
+      "n": 42,
+      "statistic": 366.0,
+      "p_value": 0.2911272097630899,
+      "mae_sarimax": 409097.2274902406,
+      "mae_gru": 354428.3717929677,
+      "median_error_difference": 15427.461839132622,
+      "significant_5pct": false,
+      "better_model": "gru"
     }
   },
   "table": [
@@ -164,6 +171,15 @@
       "meets_mape_goal": true
     },
     {
+      "model": "gru",
+      "unique_id": "total",
+      "rmse": 580806.3415725733,
+      "mae": 354428.3717929677,
+      "mape": 5.4931455438,
+      "beats_baseline": true,
+      "meets_mape_goal": true
+    },
+    {
       "model": "sarima",
       "unique_id": "total",
       "rmse": 1734123.0292836707,
@@ -291,6 +307,34 @@
     }
   ],
   "errors_by_day_type": [
+    {
+      "model": "gru",
+      "day_type": "promo",
+      "n": 15,
+      "mae": 523712.1033759995,
+      "mape": 5.1601630836
+    },
+    {
+      "model": "gru",
+      "day_type": "sin_promo",
+      "n": 21,
+      "mae": 327832.6089647971,
+      "mape": 4.8412472776
+    },
+    {
+      "model": "gru",
+      "day_type": "inicio_de_mes",
+      "n": 5,
+      "mae": 236615.6560195362,
+      "mape": 4.243573228
+    },
+    {
+      "model": "gru",
+      "day_type": "domingo",
+      "n": 6,
+      "mae": 24304.2127339855,
+      "mape": 8.6072456261
+    },
     {
       "model": "naive",
       "day_type": "promo",
