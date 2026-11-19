@@ -1,4 +1,4 @@
-streamlit>=1.38
+streamlit>=1.50
 # P-08 / D-12: versiones fijas, porque artifacts/models/sarimax_*.pkl se guardaron con ellas
 # y un pickle puede no cargar con otras. Si A regenera los pkl, actualizar las tres juntas.
 pandas==2.3.3

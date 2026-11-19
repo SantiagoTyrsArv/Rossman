@@ -33,7 +33,15 @@ PRESETS = [
     "Promo intensiva (lun–vie todas las semanas)",
     "Personalizado",
 ]
-preset = st.sidebar.radio("Promociones", PRESETS)
+preset = st.sidebar.radio(
+    "Promociones",
+    PRESETS,
+    help=(
+        "Los días elegidos **reemplazan** el calendario de promos de la base, no se suman a él. "
+        "La base ya trae el patrón histórico (unos 15 días con promo en 42 días): un escenario "
+        "con menos días de promo que ese puede vender menos que la base."
+    ),
+)
 
 promo_days: set[pd.Timestamp] | None
 if preset == "Patrón histórico":
@@ -53,6 +61,14 @@ else:
     start, end = rng if isinstance(rng, tuple) and len(rng) == 2 else (rng, rng)
     idx = {DOW_ES.index(d) for d in dows}
     promo_days = {d for d in dates if start <= d.date() <= end and d.dayofweek in idx}
+
+if promo_days is None:
+    st.sidebar.caption("Escenario = base: mismo calendario de promos que el histórico.")
+else:
+    st.sidebar.caption(
+        f"Escenario con **{len(promo_days)} días de promo** en {horizon} días. Estos días "
+        "reemplazan el calendario histórico de la base; el resto queda sin promo."
+    )
 
 with st.sidebar.expander("Festivos"):
     use_school = st.checkbox("Vacaciones escolares", value=False)
@@ -118,7 +134,7 @@ c1.metric("Ventas base", f"{base_total:,.0f} €")
 c2.metric("Ventas del escenario", f"{scen_total:,.0f} €")
 c3.metric("Ventas incrementales", f"{delta:+,.0f} €", delta=f"{pct:+.1f} %")
 
-st.plotly_chart(scenario_figure(sim), use_container_width=True)
+st.plotly_chart(scenario_figure(sim), width="stretch")
 
 sim = sim.assign(
     semana=sim["ds"].dt.to_period("W-SUN").dt.start_time,
@@ -136,7 +152,7 @@ with col_w:
         w.style.format("{:,.0f}", subset=w.columns[:3]).format(
             "{:+.1f}", subset=["Incremento (%)"]
         ),
-        use_container_width=True,
+        width="stretch",
     )
 with col_d:
     st.markdown("**Por día de la semana**")
@@ -148,7 +164,7 @@ with col_d:
         d.style.format("{:,.0f}", subset=d.columns[:3]).format(
             "{:+.1f}", subset=["Incremento (%)"], na_rep="—"
         ),
-        use_container_width=True,
+        width="stretch",
     )
 
 st.download_button(
