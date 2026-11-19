@@ -67,3 +67,9 @@
 - **Por qué:** con rangos, la CI ya instalaba pandas 3.1.1. Un pickle de statsmodels guarda objetos de pandas y numpy, así que un cambio de versión mayor en el despliegue puede impedir que el simulador cargue los modelos.
 - **Alternativa descartada:** dejar los rangos (`>=`). Hoy funciona, pero cualquier versión nueva puede romper el simulador sin aviso.
 - **Impacto medido:** las tres versiones tienen ruedas para Python 3.11 (CI) y 3.12. Si A regenera los pkl con otras versiones, hay que actualizar las tres juntas.
+
+### D-13: GRU con decodificador por día (aplica P-09, Persona B, 2026-11-18)
+- **Qué:** `build_model` deja de aplanar las exógenas futuras. El estado del codificador GRU se repite en los 42 días, se une a las exógenas de cada día y pasa por un decodificador GRU + `TimeDistributed(Dense)` con pesos compartidos en todo el horizonte.
+- **Por qué:** la versión aplanada no aprendía (underfitting: MAPE 55,9 % dentro del entrenamiento) y fallaba en los festivos.
+- **Alternativa descartada:** la v2 de la guía (modelo global con `type_*` y tiendas). Toma más horas y no hizo falta.
+- **Impacto medido (validación, `total`):** MAPE de 62,7 % a 7,6 % y RMSE de 2 389 656 a 658 021 (SARIMAX: 8,9 % / 738 378). Variante elegida por validación: 64 unidades, lookback 56, dropout 0,2, 40 épocas. En prueba, que se usó una sola vez: MAPE 5,5 %, RMSE 580 806.
