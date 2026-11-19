@@ -5,7 +5,7 @@ Proyecto final de Inteligencia de Minería de Datos. Pronostica las ventas diari
 (StoreType a–d) y para 5 tiendas seleccionadas. Incluye una app web con dashboard de predicción,
 simulación de escenarios de promoción y visualización temporal. Metodología: **CRISP-DM**.
 
-- **App pública:** <https://rossmangit-ughzxfhwlvjsef8qgxdi3e.streamlit.app/> (Streamlit Community
+- **App pública:** <https://rossman-n2q2axurd2uksg9sonyqwv.streamlit.app/> (Streamlit Community
   Cloud; si estuvo inactiva, tarda unos segundos en despertar)
 - **Objetivo SMART:** superar al baseline ingenuo estacional con **MAPE < 15 %** en el periodo
   de prueba. ✅ Cumplido por SARIMAX en los 10 niveles y por la GRU en `total`.
