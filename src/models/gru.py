@@ -234,7 +234,13 @@ def build_model(
     dropout: float = 0.2,
     lr: float = 1e-3,
 ):
-    """GRU(units) → Dropout → GRU(units/2), concatenada con las exógenas futuras aplanadas."""
+    """Codificador–decodificador (P-09 / D-13).
+
+    Codificador: GRU(units) → Dropout → GRU(units/2) sobre los días pasados. Su estado se repite
+    en cada día del horizonte y se une a las exógenas de ese día; un decodificador
+    GRU + TimeDistributed(Dense) aplica los mismos pesos a los 42 días, así el efecto de festivo,
+    domingo o promo se aprende una sola vez (la versión con exógenas aplanadas no aprendía).
+    """
     import tensorflow as tf
     from tensorflow import keras
     from tensorflow.keras import layers
@@ -245,11 +251,12 @@ def build_model(
     x = layers.GRU(units, return_sequences=True)(past)
     x = layers.Dropout(dropout)(x)
     x = layers.GRU(max(units // 2, 8))(x)
-    f = layers.Flatten()(fut)
-    h = layers.Concatenate()([x, f])
-    h = layers.Dense(64, activation="relu")(h)
-    h = layers.Dropout(dropout)(h)
-    out = layers.Dense(horizon, name="y")(h)
+    ctx = layers.RepeatVector(horizon)(x)
+    h = layers.Concatenate()([ctx, fut])
+    h = layers.GRU(units, return_sequences=True)(h)
+    h = layers.TimeDistributed(layers.Dense(32, activation="relu"))(h)
+    h = layers.TimeDistributed(layers.Dense(1))(h)
+    out = layers.Reshape((horizon,), name="y")(h)
     model = keras.Model([past, fut], out)
     model.compile(optimizer=keras.optimizers.Adam(lr), loss=keras.losses.Huber())
     return model

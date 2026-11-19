@@ -446,14 +446,14 @@ cb = [keras.callbacks.EarlyStopping(patience=15, restore_best_weights=True),
 hist = model.fit([Xp_tr, Xf_tr], Y_tr, validation_data=([Xp_va, Xf_va], Y_va),
                  epochs=300, batch_size=32, callbacks=cb)
 ```
-- [ ] **v1:** serie `total`. Con ~900 días hay pocas ventanas y riesgo de sobreajuste: grafica las curvas de aprendizaje (pérdida de train vs val) y coméntalas.
-- [ ] **v2 (si v1 sobreajusta o rinde menos que SARIMAX):** modelo global entrenado con ventanas de `type_a…d` (y de las tiendas) escaladas por serie, evaluado sobre cada nivel. Antes de hacerlo, regístralo como propuesta (6.2), porque cambia el tiempo del cronograma.
-- [ ] 2–3 variantes (unidades 32/64/128, lookback 28/56, dropout) registradas en `experiments/experiments.csv`: fecha, modelo, parámetros, MAPE y RMSE de validación. Se elige **por validación**.
-- [ ] Predicciones con origen fijo, igual que A:
+- [x] **v1:** serie `total`. Con ~900 días hay pocas ventanas y riesgo de sobreajuste: grafica las curvas de aprendizaje (pérdida de train vs val) y coméntalas.
+- [ ] ~~**v2 (si v1 sobreajusta o rinde menos que SARIMAX):**~~ no hizo falta: con D-13 la v1 supera a SARIMAX en validación. modelo global entrenado con ventanas de `type_a…d` (y de las tiendas) escaladas por serie, evaluado sobre cada nivel. Antes de hacerlo, regístralo como propuesta (6.2), porque cambia el tiempo del cronograma.
+- [x] 2–3 variantes (unidades 32/64/128, lookback 28/56, dropout) registradas en `experiments/experiments.csv`: fecha, modelo, parámetros, MAPE y RMSE de validación. Se elige **por validación**.
+- [x] Predicciones con origen fijo, igual que A:
   - `val`: entrada = 56 días hasta TRAIN_END → 42 días de validación;
   - `test`: reentrenar (o seguir) con datos hasta VAL_END → 42 días de prueba;
   - `future`: datos hasta TEST_END + `build_future_exog` de A → 42 días futuros.
-- [ ] Revertir el escalado y log1p, y escribir `artifacts/forecasts/gru.parquet` (`lo_95`/`hi_95` = NaN o un intervalo por MC Dropout si sobra tiempo) y `artifacts/metrics/gru.json` con `compute_all` de A.
+- [x] Revertir el escalado y log1p, y escribir `artifacts/forecasts/gru.parquet` (`lo_95`/`hi_95` = NaN o un intervalo por MC Dropout si sobra tiempo) y `artifacts/metrics/gru.json` con `compute_all` de A.
 - [ ] Guardar el modelo `.keras` **fuera** de `artifacts/` (en tu Drive), o en `artifacts/models/gru.keras` solo si pesa < 25 MB. La app no lo carga.
 
 `tests/test_contract_b.py`: `gru.parquet` cumple el esquema, tiene 42 filas por `unique_id` y por `split` y no tiene NaN en `y_hat`.

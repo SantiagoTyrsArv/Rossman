@@ -109,3 +109,26 @@
 - **Recomendación de Claude:** aplicar antes de desplegar; lo decide Persona B porque el archivo es suyo.
 - **Afecta a:** área del otro.
 - **Decisión del equipo:** pendiente.
+
+### P-09: decodificador por día en la GRU (2026-11-18, detectada por Persona B)
+- **Situación actual:** la GRU v1 (`build_model`) aplana las exógenas futuras (42 × 15 = 630 entradas) y las pasa por una sola `Dense`. Así tiene que aprender por separado, para cada una de las 42 posiciones del horizonte, el efecto de festivo, domingo o promo. Con 761 ventanas no le alcanza: hay **underfitting** (MAPE dentro del entrenamiento 55,9 %, pérdida de train ≈ val) y en validación da un MAPE de 62–96 %. En los festivos (14/05 y 25/05) predice 2,3–2,9 M€ cuando la venta real es ~0,3 M€.
+- **Propuesta:** el codificador GRU se mantiene igual. Su estado se repite en los 42 días (`RepeatVector`) y se concatena con las exógenas de cada día. Después pasa por un decodificador `GRU(units, return_sequences=True)` y `TimeDistributed(Dense)`, que aplica los mismos pesos a cada día del horizonte. No cambian las entradas, las ventanas, el escalador ni las salidas.
+- **Comparación (solo validación, `total`; la prueba no se usó para decidir):**
+
+| Criterio | Actual | Propuesta |
+| --- | --- | --- |
+| Requerimientos (GRU, RMSE/MAE/MAPE) | Cumple | Cumple |
+| Gratis / despliegue | Sí (la app no carga la GRU) | Sí, sin cambios |
+| Cronograma | — | ~1 h |
+| Sin fuga / partición temporal | Sí | Sí: mismas ventanas y escalador ajustado solo con train |
+| Cambia el contrato | No | No: `gru.parquet` y `gru.json` tienen el mismo esquema |
+| Afecta al otro | No | No |
+| MAPE / RMSE val | 62,7 % / 2 389 656 (mejor variante) | 7,5 % / 666 867 (64 unidades); 8,8 % / 750 320 (32 unidades) |
+| MAPE en entrenamiento | 55,9 % | 7,9 % |
+| Referencia SARIMAX val `total` | 8,9 % / 738 378 | — |
+| Explicable en el curso | Sí | Sí: arquitectura codificador–decodificador (seq2seq) |
+| Riesgo | Modelo inservible para la comparación final | Bajo; tests de forma y de contrato sin cambios |
+
+- **Recomendación de Claude:** aplicar ahora, antes de generar los pronósticos de prueba. Se mantiene la búsqueda de variantes (unidades, lookback, dropout) eligiendo por validación.
+- **Afecta a:** solo mi área (`src/models/gru.py`, `notebooks/05_gru.ipynb`).
+- **Decisión del equipo:** aprobada por Persona B el 2026-11-18 (área propia). Aplicada como D-13.
