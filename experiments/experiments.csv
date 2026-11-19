@@ -1,0 +1,21 @@
+fecha,modelo,parametros,mape_val,rmse_val,mae_val
+2026-11-18,sarima,"{""aic"": 2941.676554294485, ""order"": [2, 0, 2], ""seasonal_order"": [0, 1, 1, 7], ""source"": ""grid"", ""unique_id"": ""store_504""}",25.0839,2281.42,1685.86
+2026-11-18,sarimax,"{""aic"": -1056.4630694024918, ""order"": [2, 0, 1], ""seasonal_order"": [1, 1, 1, 7], ""source"": ""grid"", ""unique_id"": ""store_504""}",9.0410,940.18,551.95
+2026-11-18,sarima,"{""aic"": 3042.1951438245715, ""order"": [1, 0, 2], ""seasonal_order"": [0, 1, 1, 7], ""source"": ""grid"", ""unique_id"": ""store_693""}",30.9840,3210.23,2263.79
+2026-11-18,sarimax,"{""aic"": -709.4327835900525, ""order"": [2, 0, 1], ""seasonal_order"": [1, 1, 1, 7], ""source"": ""grid"", ""unique_id"": ""store_693""}",12.6745,1055.48,705.46
+2026-11-18,sarima,"{""aic"": -1340.8330601497482, ""order"": [2, 1, 2], ""seasonal_order"": [1, 1, 1, 7], ""source"": ""grid"", ""unique_id"": ""store_769""}",7.7327,1325.57,1007.11
+2026-11-18,sarimax,"{""aic"": -1415.1312666121903, ""order"": [2, 1, 1], ""seasonal_order"": [1, 1, 1, 7], ""source"": ""grid"", ""unique_id"": ""store_769""}",7.0673,1280.52,912.79
+2026-11-18,sarima,"{""aic"": 3080.820474042952, ""order"": [2, 0, 2], ""seasonal_order"": [1, 1, 1, 7], ""source"": ""grid"", ""unique_id"": ""store_9""}",36.7371,3257.12,2655.59
+2026-11-18,sarimax,"{""aic"": -1251.1648990507651, ""order"": [2, 0, 0], ""seasonal_order"": [1, 1, 1, 7], ""source"": ""grid"", ""unique_id"": ""store_9""}",9.4789,894.97,619.92
+2026-11-18,sarima,"{""aic"": 3018.2782027763797, ""order"": [2, 0, 2], ""seasonal_order"": [0, 1, 1, 7], ""source"": ""grid"", ""unique_id"": ""store_960""}",28.3193,2737.92,2033.69
+2026-11-18,sarimax,"{""aic"": -1027.9632521213684, ""order"": [2, 0, 0], ""seasonal_order"": [0, 1, 1, 7], ""source"": ""grid"", ""unique_id"": ""store_960""}",10.3830,911.40,616.59
+2026-11-18,sarima,"{""aic"": 1504.0013605093254, ""order"": [2, 0, 2], ""seasonal_order"": [0, 1, 1, 7], ""source"": ""grid"", ""unique_id"": ""total""}",120.4169,2192460.58,1486891.91
+2026-11-18,sarimax,"{""aic"": -967.6399071603932, ""order"": [2, 0, 0], ""seasonal_order"": [0, 1, 1, 7], ""source"": ""grid"", ""unique_id"": ""total""}",8.8950,738377.92,517793.79
+2026-11-18,sarima,"{""aic"": 2153.5899853039755, ""order"": [0, 0, 2], ""seasonal_order"": [0, 1, 1, 7], ""source"": ""grid"", ""unique_id"": ""type_a""}",462.2245,1262880.24,865016.35
+2026-11-18,sarimax,"{""aic"": 663.508007554511, ""order"": [0, 0, 0], ""seasonal_order"": [2, 0, 1, 7], ""source"": ""auto_arima"", ""unique_id"": ""type_a""}",19.0180,864171.24,534129.16
+2026-11-18,sarima,"{""aic"": -1678.128607591319, ""order"": [0, 1, 1], ""seasonal_order"": [1, 1, 1, 7], ""source"": ""grid"", ""unique_id"": ""type_b""}",8.1809,20776.08,16024.13
+2026-11-18,sarimax,"{""aic"": -2126.4260901458574, ""order"": [2, 1, 2], ""seasonal_order"": [0, 1, 1, 7], ""source"": ""grid"", ""unique_id"": ""type_b""}",5.2412,15850.88,10431.08
+2026-11-18,sarima,"{""aic"": 3623.7902789595705, ""order"": [1, 0, 2], ""seasonal_order"": [0, 1, 1, 7], ""source"": ""grid"", ""unique_id"": ""type_c""}",31.2187,394801.65,302667.23
+2026-11-18,sarimax,"{""aic"": 1280.9257319494818, ""order"": [2, 0, 2], ""seasonal_order"": [0, 1, 1, 7], ""source"": ""grid"", ""unique_id"": ""type_c""}",14.4412,169585.07,113620.48
+2026-11-18,sarima,"{""aic"": 1856.1086269545976, ""order"": [0, 0, 2], ""seasonal_order"": [0, 1, 1, 7], ""source"": ""grid"", ""unique_id"": ""type_d""}",987.7907,771205.84,525753.55
+2026-11-18,sarimax,"{""aic"": 21.97694407287368, ""order"": [2, 0, 1], ""seasonal_order"": [0, 1, 1, 7], ""source"": ""grid"", ""unique_id"": ""type_d""}",17.4580,340162.70,236907.77
