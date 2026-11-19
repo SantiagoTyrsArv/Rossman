@@ -134,7 +134,7 @@ c1.metric("Ventas base", f"{base_total:,.0f} €")
 c2.metric("Ventas del escenario", f"{scen_total:,.0f} €")
 c3.metric("Ventas incrementales", f"{delta:+,.0f} €", delta=f"{pct:+.1f} %")
 
-st.plotly_chart(scenario_figure(sim), use_container_width=True)
+st.plotly_chart(scenario_figure(sim), width="stretch")
 
 sim = sim.assign(
     semana=sim["ds"].dt.to_period("W-SUN").dt.start_time,
@@ -152,7 +152,7 @@ with col_w:
         w.style.format("{:,.0f}", subset=w.columns[:3]).format(
             "{:+.1f}", subset=["Incremento (%)"]
         ),
-        use_container_width=True,
+        width="stretch",
     )
 with col_d:
     st.markdown("**Por día de la semana**")
@@ -164,7 +164,7 @@ with col_d:
         d.style.format("{:,.0f}", subset=d.columns[:3]).format(
             "{:+.1f}", subset=["Incremento (%)"], na_rep="—"
         ),
-        use_container_width=True,
+        width="stretch",
     )
 
 st.download_button(
