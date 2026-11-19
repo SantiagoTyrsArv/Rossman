@@ -19,3 +19,7 @@ fecha,modelo,parametros,mape_val,rmse_val,mae_val
 2026-11-18,sarimax,"{""aic"": 1280.9257319494818, ""order"": [2, 0, 2], ""seasonal_order"": [0, 1, 1, 7], ""source"": ""grid"", ""unique_id"": ""type_c""}",14.4412,169585.07,113620.48
 2026-11-18,sarima,"{""aic"": 1856.1086269545976, ""order"": [0, 0, 2], ""seasonal_order"": [0, 1, 1, 7], ""source"": ""grid"", ""unique_id"": ""type_d""}",987.7907,771205.84,525753.55
 2026-11-18,sarimax,"{""aic"": 21.97694407287368, ""order"": [2, 0, 1], ""seasonal_order"": [0, 1, 1, 7], ""source"": ""grid"", ""unique_id"": ""type_d""}",17.4580,340162.70,236907.77
+2026-11-18,gru,"{""best_epoch"": 32, ""dropout"": 0.2, ""lookback"": 56, ""uid"": ""total"", ""units"": 32}",8.6957,751783.49,490134.71
+2026-11-18,gru,"{""best_epoch"": 40, ""dropout"": 0.2, ""lookback"": 56, ""uid"": ""total"", ""units"": 64}",7.5853,656768.83,466657.40
+2026-11-18,gru,"{""best_epoch"": 34, ""dropout"": 0.3, ""lookback"": 56, ""uid"": ""total"", ""units"": 128}",7.9374,658868.05,440312.58
+2026-11-18,gru,"{""best_epoch"": 61, ""dropout"": 0.2, ""lookback"": 28, ""uid"": ""total"", ""units"": 64}",7.8078,632381.27,442126.85
