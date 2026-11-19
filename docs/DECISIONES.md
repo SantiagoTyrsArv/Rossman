@@ -73,3 +73,24 @@
 - **Por qué:** la versión aplanada no aprendía (underfitting: MAPE 55,9 % dentro del entrenamiento) y fallaba en los festivos.
 - **Alternativa descartada:** la v2 de la guía (modelo global con `type_*` y tiendas). Toma más horas y no hizo falta.
 - **Impacto medido (validación, `total`):** MAPE de 62,7 % a 7,6 % y RMSE de 2 389 656 a 658 021 (SARIMAX: 8,9 % / 738 378). Variante elegida por validación: 64 unidades, lookback 56, dropout 0,2, 40 épocas. En prueba, que se usó una sola vez: MAPE 5,5 %, RMSE 580 806.
+
+### D-14: diferenciación s = 7, D = 1 y d según ADF/KPSS (A4, Persona A, 2026-11-18)
+- **Qué:** D = 1 en todos los niveles. d = 1 solo si ADF no rechaza raíz unitaria o KPSS rechaza estacionariedad (`choose_d`); en los agregados, solo el tipo b.
+- **Por qué:** la ACF de `log1p(y)` no decae en múltiplos de 7 (0,80 en el lag 7) y Δ₇y la limpia. La estacionalidad anual va con Fourier: 2,35 años no alcanzan para s = 365.
+- **Alternativa descartada:** SARIMA con s = 365.
+
+### D-15: selección en dos pasos y prueba usada una sola vez (A6-A7, Persona A, 2026-11-18)
+- **Qué:** `select` usa solo datos hasta `VAL_END`: 36 candidatos más AutoARIMA, 5 finalistas por AIC y gana el menor RMSE de validación. Los órdenes se versionan en `artifacts/models/arima_selection.json` antes de ejecutar `final`.
+- **Alternativa descartada:** elegir solo por AIC.
+- **Impacto medido:** SARIMAX supera al ingenuo en RMSE de validación en los 10 niveles.
+
+### D-16: cierres totales como faltantes en `type_a` y `type_d` (aplica P-05, aprobada por Persona A, 2026-11-18)
+- **Qué:** si al menos el 5 % de los días tiene apertura parcial, los días con `y = 0` y `open_share = 0` no se usan para ajustar. Todo pronóstico SARIMAX con `open_share = 0` vale 0 en los parquet.
+- **Por qué:** `log1p(0)` queda muy lejos de un domingo con pocas tiendas abiertas y `open_share` no puede explicar ese salto.
+- **Alternativa descartada:** mantener esos días, como indicaba el flujo original.
+- **Impacto medido en validación (SARIMAX):** `type_a` pasa de RMSE 1 186 937 y MAPE 28,8 % a 864 171 y 19,0 %; `type_d`, de 541 852 y 27,1 % a 340 163 y 17,5 %.
+
+### D-17: `sarimax_*.pkl` compactos (aplica P-06, aprobada por Persona A, 2026-11-18)
+- **Qué:** el pkl se guarda desde un modelo limpio filtrado con `conserve_memory`, sin las matrices históricas.
+- **Alternativas descartadas:** `remove_data=True` (falla al pronosticar) y `low_memory=True` (intervalos NaN).
+- **Impacto medido:** de 33-46 MB a un máximo de 0,67 MB por modelo (6,6 MB en total), con pronóstico e intervalos idénticos. El pkl no sirve para `summary()`.

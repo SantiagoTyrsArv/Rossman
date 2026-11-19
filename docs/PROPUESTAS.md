@@ -72,7 +72,7 @@
 
 - **Recomendación de Claude:** aplicar ahora, antes de generar los pronósticos de prueba.
 - **Afecta a:** solo mi área.
-- **Decisión del equipo:** pendiente.
+- **Decisión del equipo:** aprobada por Persona A y aplicada (D-16).
 
 ### P-06: guardar los `sarimax_*.pkl` sin las matrices históricas del filtro (2026-11-18, detectada por Persona A)
 - **Situación actual:** con `results.save` normal cada pkl pesa entre 33 y 46 MB, por encima del límite de 25 MB de la tarea A7 (unos 400 MB para los 10 niveles). `remove_data=True` falla al pronosticar y `low_memory=True` deja los intervalos en NaN.
@@ -92,7 +92,7 @@
 
 - **Recomendación de Claude:** aplicar ahora.
 - **Afecta a:** solo mi área.
-- **Decisión del equipo:** pendiente.
+- **Decisión del equipo:** aprobada por Persona A y aplicada (D-17).
 
 ### P-07: festivos escolares por defecto en `build_future_exog` (2026-11-18, detectada por Persona A)
 - **Situación actual:** por defecto `school_holiday_share = 0` en todo el futuro, pero entre el 01/08 y el 11/09/2014 fue 0,47 de media. Con el modelo de `total`, usar 0 en validación sube el RMSE de 738 378 a 780 637 (+5,7 %), aun cuando allí la media real era solo 0,07.
