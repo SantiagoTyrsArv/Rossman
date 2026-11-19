@@ -1,7 +1,9 @@
 streamlit>=1.38
-pandas>=2.2
+# P-08 / D-12: versiones fijas, porque artifacts/models/sarimax_*.pkl se guardaron con ellas
+# y un pickle puede no cargar con otras. Si A regenera los pkl, actualizar las tres juntas.
+pandas==2.3.3
+numpy==2.4.6
+statsmodels==0.15.0
 pyarrow>=16
 plotly>=5.22
-statsmodels>=0.14.2
-numpy>=1.26
 scipy>=1.13

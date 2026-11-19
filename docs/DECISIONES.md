@@ -61,3 +61,9 @@
 
 ### D-01 validada (EDA, 2026-11-15)
 - Solo el 2,4 % de los tienda-días de domingo están abiertos y el domingo aporta el 0,5 % de la venta (el tipo b abre el 98 % de los domingos). Se mantiene la serie diaria con domingos, s = 7 y `open_share`.
+
+### D-12: versiones fijas de pandas, numpy y statsmodels en `app/requirements.txt` (aplica P-08, Persona B, 2026-11-18)
+- **Qué:** `pandas==2.3.3`, `numpy==2.4.6` y `statsmodels==0.15.0`, las versiones con las que A guardó `artifacts/models/sarimax_*.pkl`. El resto de dependencias sigue con rango.
+- **Por qué:** con rangos, la CI ya instalaba pandas 3.1.1. Un pickle de statsmodels guarda objetos de pandas y numpy, así que un cambio de versión mayor en el despliegue puede impedir que el simulador cargue los modelos.
+- **Alternativa descartada:** dejar los rangos (`>=`). Hoy funciona, pero cualquier versión nueva puede romper el simulador sin aviso.
+- **Impacto medido:** las tres versiones tienen ruedas para Python 3.11 (CI) y 3.12. Si A regenera los pkl con otras versiones, hay que actualizar las tres juntas.
